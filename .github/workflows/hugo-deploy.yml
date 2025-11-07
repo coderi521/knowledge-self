@@ -1,0 +1,39 @@
+name: Hugo Build & Deploy to GitHub Pages
+
+# 触发条件：当推送到 main 分支时，自动运行工作流
+on:
+  push:
+    branches: [ main ]  # 若你的默认分支是 master，替换为 master
+  workflow_dispatch:  # 允许手动触发（可选）
+
+# 工作流任务
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest  # 运行在 Ubuntu 服务器上
+    steps:
+      # 步骤 1：拉取 GitHub 仓库的 Hugo 源码
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true  # 若主题是通过 Git Submodule 引入的，必须开启（否则主题文件会缺失）
+          fetch-depth: 0    # 拉取完整的提交历史（避免构建时缺失版本信息）
+
+      # 步骤 2：安装 Hugo（指定版本，建议与本地 Hugo 版本一致）
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.151.2'  # 替换为你的本地 Hugo 版本（用 hugo version 查看）
+          # extended: true  # 若使用需要 SCSS 编译的主题，取消注释这行（启用 Hugo 扩展版）
+
+      # 步骤 3：构建 Hugo 站点（生成 public 目录）
+      - name: Build Hugo Site
+        run: hugo --minify  # --minify 压缩 HTML/CSS/JS（可选，优化加载速度）
+
+      # 步骤 4：部署 public 目录到 GitHub Pages（gh-pages 分支）
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # GitHub 自动生成的密钥（无需手动配置）
+          publish_dir: ./public  # 要部署的目录（Hugo 构建后的静态文件目录）
+          publish_branch: gh-pages  # 部署到的分支（专门存放静态文件，自动创建）
+          force_orphan: true  # 清空 gh-pages 分支历史（可选，减少仓库体积）
