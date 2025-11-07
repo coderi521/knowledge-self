@@ -23,7 +23,7 @@ jobs:
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: '0.151.2'  # 替换为你的本地 Hugo 版本（用 hugo version 查看）
-          # extended: true  # 若使用需要 SCSS 编译的主题，取消注释这行（启用 Hugo 扩展版）
+          extended: true  # 若使用需要 SCSS 编译的主题，取消注释这行（启用 Hugo 扩展版）
 
       # 步骤 3：构建 Hugo 站点（生成 public 目录）
       - name: Build Hugo Site
