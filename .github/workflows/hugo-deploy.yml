@@ -5,7 +5,11 @@ on:
   push:
     branches: [ main ]  # 若你的默认分支是 master，替换为 master
   workflow_dispatch:  # 允许手动触发（可选）
-
+# 关键：添加权限配置，赋予写入仓库的权限
+permissions:
+  contents: write  # 允许读写仓库文件/分支（核心权限）
+  pages: write     # 允许操作 GitHub Pages（可选，增强兼容性）
+  id-token: write  # 可选，用于 Pages 部署的身份验证
 # 工作流任务
 jobs:
   build-deploy:
